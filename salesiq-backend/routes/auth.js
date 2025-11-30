@@ -8,7 +8,8 @@ const router = express.Router();
 
 // Create token
 const generateToken = (id, role) => {
-  return jwt.sign({ id, role }, process.env.JWT_SECRET, {
+  const jwtSecret = process.env.JWT_SECRET || 'your-super-secret-jwt-key-change-this-in-production';
+  return jwt.sign({ id, role }, jwtSecret, {
     expiresIn: process.env.JWT_EXPIRE || "7d",
   });
 };
