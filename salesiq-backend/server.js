@@ -33,14 +33,27 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Database Connection (Atlas)
-mongoose
-  .connect(process.env.MONGODB_URI || 'mongodb+srv://dinesh57399_db_user:kL4VZYXBcSeatfFM@clusterdhina.ozsnsei.mongodb.net/?appName=ClusterDhina', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ Connected to MongoDB Atlas"))
-  .catch((err) => console.error("❌ MongoDB Atlas Error:", err));
+// Database Connection (Atlas) with retry logic
+const connectDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://dinesh57399_db_user:kL4VZYXBcSeatfFM@clusterdhina.ozsnsei.mongodb.net/?appName=ClusterDhina&retryWrites=true&w=majority', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+    });
+    console.log("✅ Connected to MongoDB Atlas");
+  } catch (err) {
+    console.error("❌ MongoDB Atlas Error:", err.message);
+    console.log("⚠️  Please check Atlas IP whitelist: https://www.mongodb.com/docs/atlas/security-whitelist/");
+    console.log("🔄 Retrying connection in 5 seconds...");
+    
+    // Retry connection after 5 seconds
+    setTimeout(connectDB, 5000);
+  }
+};
+
+connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
