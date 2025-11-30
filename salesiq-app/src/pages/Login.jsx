@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -11,6 +10,9 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  const API_URL = import.meta.env.VITE_API_URL; 
+  // Example: https://your-backend.onrender.com
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +29,7 @@ const Login = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
+      const response = await fetch(`${API_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -45,7 +47,6 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
-      // Redirect to dashboard
       navigate('/onboard');
     } catch (err) {
       setError(err.message);
@@ -57,7 +58,8 @@ const Login = () => {
   return (
     <div className="login-container">
       <div className="login-wrapper">
-        {/* Left Section - Branding */}
+
+        {/* Left Section */}
         <div className="login-left">
           <div className="login-brand">
             <div className="brand-logo">
@@ -111,7 +113,7 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Section - Form */}
+        {/* Right Section */}
         <div className="login-right">
           <div className="login-form-container">
             <h2>Sign In</h2>
@@ -219,6 +221,7 @@ const Login = () => {
             <p>© 2024 SalesIQ Replica. All rights reserved.</p>
           </div>
         </div>
+
       </div>
     </div>
   );
