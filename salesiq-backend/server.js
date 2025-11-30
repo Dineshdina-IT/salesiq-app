@@ -20,15 +20,35 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: [
-      process.env.FRONTEND_URL || "https://salesiq-app.vercel.app",
-      "https://salesiq-app.vercel.app",
-      "http://localhost:5173"
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+      
+      // Allowed origins
+      const allowedOrigins = [
+        process.env.FRONTEND_URL || "https://salesiq-app.vercel.app",
+        "https://salesiq-app.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:8080"
+      ];
+      
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.log('CORS blocked for origin:', origin);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
     credentials: true,
+    optionsSuccessStatus: 200
   })
 );
+
+// Handle preflight requests
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -65,7 +85,21 @@ app.use('/api/settings', settingsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'Backend running', timestamp: new Date() });
+  res.json({ 
+    status: 'Backend running', 
+    timestamp: new Date(),
+    cors: 'enabled',
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
+// CORS test endpoint
+app.get('/api/test-cors', (req, res) => {
+  res.json({ 
+    message: 'CORS test successful',
+    origin: req.headers.origin,
+    timestamp: new Date()
+  });
 });
 
 // 404 handler
