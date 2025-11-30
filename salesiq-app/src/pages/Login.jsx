@@ -11,8 +11,7 @@ const Login = () => {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL; 
-  // Example: https://your-backend.onrender.com
+  const API_URL = import.meta.env.VITE_API_URL || 'https://salesiq-app.onrender.com';
 
   const handleChange = (e) => {
     const { name, value } = e.target;

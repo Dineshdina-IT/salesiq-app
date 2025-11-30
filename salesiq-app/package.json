@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "deploy": "npm run build",
     "deploy:vercel": "npm run build && vercel --prod",
-    "deploy:netlify": "npm run build && netlify deploy --prod --dir=dist"
+    "deploy:netlify": "npm run build && netlify deploy --prod --dir=dist",
+    "start:prod": "vite preview --port 3000"
   },
   "dependencies": {
     "react": "^19.2.0",

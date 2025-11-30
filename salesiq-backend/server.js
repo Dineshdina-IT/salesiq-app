@@ -21,7 +21,8 @@ const app = express();
 app.use(
   cors({
     origin: [
-      process.env.FRONTEND_URL || "http://localhost:5173",
+      process.env.FRONTEND_URL || "https://salesiq-app.vercel.app",
+      "https://salesiq-app.vercel.app",
       "http://localhost:5173"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -34,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database Connection (Atlas)
 mongoose
-  .connect(process.env.MONGODB_URI, {
+  .connect(process.env.MONGODB_URI || 'mongodb+srv://dinesh57399_db_user:kL4VZYXBcSeatfFM@clusterdhina.ozsnsei.mongodb.net/?appName=ClusterDhina', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
